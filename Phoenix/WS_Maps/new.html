@@ -1,0 +1,1208 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>WaterSim Maps</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+    <link rel="stylesheet" href="./Sankey/sankey.css" />    
+</head>
+<style type="text/css">
+    html, body { height:95% }
+
+    #main_content {
+        width:100%; 
+        height:100%;
+        align-content:center;
+        position: relative;
+    }
+
+    #map_left {
+        width:50%; 
+        height: 90%;
+        float: left;
+    }
+
+    #map_right {
+        width:50%; 
+        height: 90%;
+        float: right;
+    }
+
+    .leaflet-container {
+        background-color:rgba(255,0,0,0.0);
+    }
+
+    .info {
+        padding: 6px 8px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: white;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 5px;
+    }
+    .info h4 {
+        margin: 0 0 5px;
+        color: #777;
+    }
+
+    .legend {
+        line-height: 18px;
+        color: #555;
+    }
+    .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 8px;
+        opacity: 0.7;
+    }
+
+    .button {
+        border: none;
+        color: black;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+
+    .title {
+        text-align: center;
+        width: 50%;
+    }
+
+    .title h1 {
+        margin: 5px 0px;
+    }
+
+    #loadingScreen{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background:  rgba(255,255,255,0.7);
+        z-index:  1000;
+        height: 100%;
+        text-align: center;
+        margin: auto;
+        padding: 0;
+        overflow: hidden;
+        font-size: 250%;
+        display: none;
+        vertical-align: middle;
+    }
+
+    .loadingBar {
+        height: 10px;
+        background-color: #007dcc;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 999999;
+    }
+
+    #fountainTextG{
+        position:absolute;
+    }
+
+    .fountainTextG{
+        color:rgb(0,126,204);
+        font-family:Arial;
+        font-size:106px;
+        text-decoration:none;
+        font-weight:normal;
+        font-style:normal;
+        float:left;
+        animation-name:bounce_fountainTextG;
+            -o-animation-name:bounce_fountainTextG;
+            -ms-animation-name:bounce_fountainTextG;
+            -webkit-animation-name:bounce_fountainTextG;
+            -moz-animation-name:bounce_fountainTextG;
+        animation-duration:3.46s;
+            -o-animation-duration:3.46s;
+            -ms-animation-duration:3.46s;
+            -webkit-animation-duration:3.46s;
+            -moz-animation-duration:3.46s;
+        animation-iteration-count:infinite;
+            -o-animation-iteration-count:infinite;
+            -ms-animation-iteration-count:infinite;
+            -webkit-animation-iteration-count:infinite;
+            -moz-animation-iteration-count:infinite;
+        animation-direction:normal;
+            -o-animation-direction:normal;
+            -ms-animation-direction:normal;
+            -webkit-animation-direction:normal;
+            -moz-animation-direction:normal;
+        transform:scale(.5);
+            -o-transform:scale(.5);
+            -ms-transform:scale(.5);
+            -webkit-transform:scale(.5);
+            -moz-transform:scale(.5);
+    }#fountainTextG_1{
+        animation-delay:1.24s;
+            -o-animation-delay:1.24s;
+            -ms-animation-delay:1.24s;
+            -webkit-animation-delay:1.24s;
+            -moz-animation-delay:1.24s;
+    }
+    #fountainTextG_2{
+        animation-delay:1.48s;
+            -o-animation-delay:1.48s;
+            -ms-animation-delay:1.48s;
+            -webkit-animation-delay:1.48s;
+            -moz-animation-delay:1.48s;
+    }
+    #fountainTextG_3{
+        animation-delay:1.73s;
+            -o-animation-delay:1.73s;
+            -ms-animation-delay:1.73s;
+            -webkit-animation-delay:1.73s;
+            -moz-animation-delay:1.73s;
+    }
+    #fountainTextG_4{
+        animation-delay:1.98s;
+            -o-animation-delay:1.98s;
+            -ms-animation-delay:1.98s;
+            -webkit-animation-delay:1.98s;
+            -moz-animation-delay:1.98s;
+    }
+    #fountainTextG_5{
+        animation-delay:2.22s;
+            -o-animation-delay:2.22s;
+            -ms-animation-delay:2.22s;
+            -webkit-animation-delay:2.22s;
+            -moz-animation-delay:2.22s;
+    }
+    #fountainTextG_6{
+        animation-delay:2.47s;
+            -o-animation-delay:2.47s;
+            -ms-animation-delay:2.47s;
+            -webkit-animation-delay:2.47s;
+            -moz-animation-delay:2.47s;
+    }
+    #fountainTextG_7{
+        animation-delay:2.72s;
+            -o-animation-delay:2.72s;
+            -ms-animation-delay:2.72s;
+            -webkit-animation-delay:2.72s;
+            -moz-animation-delay:2.72s;
+    }
+
+    @keyframes bounce_fountainTextG{
+        0%{
+            transform:scale(1);
+            color:rgb(0,126,204);
+        }
+
+        100%{
+            transform:scale(.5);
+            color:rgb(255,255,255);
+        }
+    }
+
+    @-o-keyframes bounce_fountainTextG{
+        0%{
+            -o-transform:scale(1);
+            color:rgb(0,126,204);
+        }
+
+        100%{
+            -o-transform:scale(.5);
+            color:rgb(255,255,255);
+        }
+    }
+
+    @-ms-keyframes bounce_fountainTextG{
+        0%{
+            -ms-transform:scale(1);
+            color:rgb(0,126,204);
+        }
+
+        100%{
+            -ms-transform:scale(.5);
+            color:rgb(255,255,255);
+        }
+    }
+
+    @-webkit-keyframes bounce_fountainTextG{
+        0%{
+            -webkit-transform:scale(1);
+            color:rgb(0,126,204);
+        }
+
+        100%{
+            -webkit-transform:scale(.5);
+            color:rgb(255,255,255);
+        }
+    }
+
+    @-moz-keyframes bounce_fountainTextG{
+        0%{
+            -moz-transform:scale(1);
+            color:rgb(0,126,204);
+        }
+
+        100%{
+            -moz-transform:scale(.5);
+            color:rgb(255,255,255);
+        }
+    }
+</style>
+
+<body>
+    <div id="loadingScreen">
+        <div id="fountainTextG"><div id="fountainTextG_1" class="fountainTextG">L</div><div id="fountainTextG_2" class="fountainTextG">o</div><div id="fountainTextG_3" class="fountainTextG">a</div><div id="fountainTextG_4" class="fountainTextG">d</div><div id="fountainTextG_5" class="fountainTextG">i</div><div id="fountainTextG_6" class="fountainTextG">n</div><div id="fountainTextG_7" class="fountainTextG">g</div></div>
+    </div>
+
+    <div id="main_content">
+        <div id="title_left" style="float: left;" class="title"><h1>Sources</h1></div>
+        <div id="title_right" style="float: right;" class="title"><h1>Consumers</h1></div>
+        <div id="map_left"></div>
+        <div id="map_right"></div>
+        Show Layers:
+        <label><input type="checkbox" name="layer" value="state">State</label>
+        <label><input type="checkbox" name="layer" value="basin" checked>Basin</label>
+        <label><input type="checkbox" name="layer" value="county" checked>County</label>
+        <!-- <label><input type="checkbox" name="layer" value="region">Region</label> -->
+        <br>
+        Boundaries:
+        <label><input type="checkbox" name="boundary" value="state" checked>State</label>
+        <label><input type="checkbox" name="boundary" value="basin" checked>Basin</label>
+        <label><input type="checkbox" name="boundary" value="county" checked>County</label>
+        <!-- <label><input type="checkbox" name="boundary" value="region" checked>Region</label> -->
+    </div>
+    
+
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src='./libs/shp.min.js'></script>
+    <script src='./js/Loading.js'></script>
+    <script src='./js/InfoRequest.js'></script>
+    <script src='./js/INFO_REQUEST.js'></script>
+    <script src='./js/WS_RETURN_DATA.js'></script>
+    <script src='./Sankey/flux.js'></script>
+    <script src='./Sankey/sankey.js'></script>
+    <script src='./SankeySankeyChart.js'></script>
+    <script type="text/javascript">
+        // http://leafletjs.com/examples/choropleth/
+
+        var mapLeft = L.map('map_left', {
+            center: [37.78808138412046,-110.74218749999999],
+            zoom: 5,
+            minZoom: 4,
+            maxZoom: 8
+        });
+
+        /*var Stamen_TonerLite = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            subdomains: 'abcd',
+            minZoom: 4,
+            maxZoom: 7,
+            ext: 'png'
+        }).addTo( mapLeft );*/
+
+        var mapRight = L.map('map_right', {
+            center: [37.78808138412046,-110.74218749999999],
+            zoom: 5,
+            minZoom: 4,
+            maxZoom: 7
+        });
+
+        /*var Esri_WorldGrayCanvas = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+            maxZoom: 7
+        }).addTo( mapRight );*/
+
+        var maps = [mapLeft, mapRight];
+        var colors = [colorbrewer.Blues["6"], colorbrewer.Reds["6"], ["#fff"]];
+        var infoControls = [],
+        legendControls = [];
+        // var dataControls = [["SUR","SAL","GW","REC"],["UTOT","RTOT","ATOT","ITOT","PTOT"]];
+        var dataControls = [["SUR","SAL","GW","REC"],["UTOT","ATOT","ITOT","PTOT"]];
+        var activeDataControls = ["SUR", "UTOT"];
+        var activeLayers = {"state": false, "basin": true, "county": true};
+        var bins = {};
+        var STATE_NAMES = {
+            "4": "Arizona",
+            "6": "California",
+            "8": "Colorado",
+            "31": "Nebraska",
+            "32": "Nevada",
+            "35": "New Mexico",
+            "49": "Utah",
+            "56": "Wyoming"
+        };
+
+        var countyLayers = [],
+        basinLayers = [],
+        stateLayers = [],
+        regionLayers = [],
+        selectedLayers = [{},{}];
+
+        var mapData = {};
+
+        $.each(dataControls, function(index, controls){
+            $.each(controls, function(controlIndex, control){
+                bins[control] = [];
+            })
+        })
+
+        var tempValues = [0,1,2,3,4];
+        
+        $.each(maps, function(index, map){
+            map.setMaxBounds(map.getBounds());
+
+            var info = L.control();
+            info.onAdd = function (map) {
+                this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+                this.update();
+                return this._div;
+            };
+
+            // method that we will use to update the control based on feature properties passed
+            info.update = function (props) {
+                var details = 'Hover over a county';
+                this._div.innerHTML = '<h4>Basin Counties</h4>';
+
+                if(props){
+                    var cc = parseInt(props.COUNTYFP),
+                    sc = parseInt(props.STATEFP);
+                    if(mapData[sc] && mapData[sc][cc]){
+                        // console.log(sc + ": " + mapData[sc][cc].SN);
+                        details = '<b>' + STATE_NAMES[sc] + '</b><br />' + props.NAMELSAD + '<br />' + mapData[sc][cc][activeDataControls[index]] + ' Mgal/d';
+                    }
+                    else{
+                        // console.log('sc: ' + sc)
+                        details = '<b>' + STATE_NAMES[sc] + '</b><br />' + props.NAMELSAD + '<br />No Data';
+                    }                    
+                }
+                this._div.innerHTML += details;
+            };
+            info.addTo(map);
+            infoControls.push(info);
+
+            /*var legend = L.control({position: 'bottomleft'});
+            legend.onAdd = function (map) {
+
+                var div = L.DomUtil.create('div', 'info legend');
+
+                // loop through our density intervals and generate a label with a colored square for each interval
+                for (var i = 0; i < tempValues.length; i++) {
+                    div.innerHTML +=
+                        '<i style="background:' + colors[index][1 + i] + ';opacity:0.75"></i> ' +
+                        tempValues[i] + (tempValues[i + 1] ? '&ndash;' + tempValues[i + 1] + '<br>' : '+');
+                }
+
+                return div;
+            };
+            legend.addTo(map);
+            legendControls.push(legend);*/
+
+            var dataControl = L.control({position: 'bottomright'});
+            dataControl.onAdd = function (map) {
+
+                var div = L.DomUtil.create('div', 'info legend');
+                // console.log(dataControls[index])
+                $.each(dataControls[index], function(dataIndex, field){
+                    var label = '',
+                    id = '',
+                    name = '';
+                    $.each(INFOREQUEST.FieldInfo, function(fieldIndex, fieldInfo){
+                        if(fieldInfo.FLD == field){
+                            label = fieldInfo.LAB;
+                            id = 'Map' + index + 'InputUserControl_radio_' + dataIndex;
+                            name = 'Map' + index + 'InputUserControl_radio';
+                            return false;
+                        }
+                    });
+                    if(label != id)
+                        div.innerHTML += getRadioButton(id, name, field, label, dataIndex) + (dataControls[index][dataIndex + 1] ? '<br>' : '');
+                });
+                // div.innerHTML += '<button class="button" type="button" onclick="alert(\'Hello world!\')">Click Me!</button>';
+
+                return div;
+            };
+            dataControl.addTo(map);            
+            dataControls.push(dataControl);
+
+            $('input[type=radio][name='+ ('Map' + index + 'InputUserControl_radio') + ']').change(function() {
+                infoControls[index].update();
+                selectedLayers[index] = {};
+
+                activeDataControls[index] = this.value;                
+                var legend = legendControls[index].getContainer();
+                var bin = bins[this.value];
+                var html = '';
+                // loop through our density intervals and generate a label with a colored square for each interval
+                for (var i = 0; i < bin.length - 1; i++) {
+                    html +=
+                        '<i style="background:' + colors[index][1 + i] + ';opacity:0.75"></i> ' +
+                        bin[i] + (bin[i + 2] ? '&ndash;' + bin[i + 1] + '<br>' : '+');
+                }
+                legend.innerHTML = html;
+
+                $.each(countyLayers[index].getLayers(), function(layerIndex, layer){
+                    if(index){
+                        onEachFeature_MapRight(layer.feature, layer);
+                    }
+                    else{
+                        onEachFeature_MapLeft(layer.feature, layer);
+                    }
+                });
+            });
+        });
+
+        function getRadioButton(id, name, value, label, checked){
+            return '<input type="radio" name="' + name+ '" value="'+ value + '" id="'+ id + '" ' + (!checked ? 'checked' : '') + '><label for="'+ id + '">'+ label +'</label>';
+        }
+        
+        function getDefaultCountyStyle(color, val){
+            return {
+                "fillColor": colors[color][1 + val],
+                "weight": 1,
+                "fillOpacity": .75,
+                "color": "#003300"
+            }
+        }
+
+        var defaultCountyStyle = {
+            "weight": 1,
+            "color": "#003300"
+        }
+
+        var hoverCountyStyle = {
+            "weight": 0,
+            "color": "#66FF00"
+        };
+
+        var hoverCountyStyleNew = {
+            "weight": 2,
+            "color": "#08519c"
+        };
+
+        var selectCountyStyle = {
+            "weight": 3,
+            "color": "#fff30d"
+        };
+
+        var hoverSelectCountyStyle = {
+            "weight": 0
+        };
+
+        var imageOverlays = [{},{}];
+
+        function getDefaultBasinStyle(){
+            return {
+                "fillColor": "#f1f1f1",
+                // "fillColor": "#efefef",
+                "weight": 1,
+                "fillOpacity": 1,
+                "color": "#003300"
+            };   
+        }
+
+        function getDefaultStateStyle(){
+            return {
+                // "fillColor": "#d9d9d9",
+                "fillColor": "#efefef",
+                "weight": 1,
+                "fillOpacity": 1,
+                "color": "#003300"
+            };   
+        }
+
+        var station_default_style = {
+            fillColor: "#3300FF",
+            radius: 6,
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 1
+        };
+
+        var panes = {
+            state: mapLeft.createPane('state'),
+            basin: mapLeft.createPane('basin'),
+            county: mapLeft.createPane('county'),
+            flow: mapLeft.createPane('flow'),
+        };
+
+        var panes = [{},{}];
+        $.each(panes, function(i,d){
+            d.state = maps[i].createPane('state'),
+            d.basin = maps[i].createPane('basin'),
+            d.county = maps[i].createPane('county'),
+            d.flow = maps[i].createPane('flow');
+
+            d.state.style.zIndex = 300,
+            d.basin.style.zIndex = 350,
+            d.county.style.zIndex = 500,
+            d.flow.style.zIndex = 600;
+        });
+
+        
+
+
+        //JSON layer style variables defined in map_styles.js
+
+        function onEachFeature_MapLeft(feature, layer) {
+            /*var val = Math.floor(Math.random()* 5);
+            if(typeof(feature.properties.val) != "undefined"){
+                val = feature.properties.val;
+            }
+            else{
+                feature.properties.val = val;
+            }*/
+
+            var cc = parseInt(feature.properties.COUNTYFP),
+            sc = parseInt(feature.properties.STATEFP),
+            field = activeDataControls[0];
+            var defaultStyle = {};          
+            if(mapData[sc] && mapData[sc][cc]){
+                var val = mapData[sc][cc][field];
+                var bin = bins[field];
+
+                for(var i = 0; i < bin.length-1; i++){
+                    if(val >= bin[i] && val < bin[i+1]){
+                        // console.log('val: ' + val + ', i: ' + i);
+                        val = i;
+                        break;
+                    }
+                }
+
+                defaultStyle = getDefaultCountyStyle(0, val);
+            }
+            else{
+                defaultStyle = getDefaultCountyStyle(2, -1);                
+            }
+
+            defaultStyle = {
+                "fillColor": "#ffffff",
+                "weight": 1,
+                "fillOpacity": .75,
+                "color": "#003300"
+            }
+
+            var centLatLon = layer.getBounds().getCenter(); //this is used to place the popup in the "mouseover" function            
+            layer.setStyle(defaultStyle);
+
+            if(["Maricopa","Riverside", "Summit", "Butte", "San Bernardino"].indexOf(feature.properties.NAME) > -1){
+
+                var bounds =layer.getBounds();
+                var nw = mapLeft.latLngToLayerPoint( bounds.getNorthWest() ),
+                se = mapLeft.latLngToLayerPoint( bounds.getSouthEast()),
+                center = mapLeft.latLngToLayerPoint(centLatLon);
+
+                console.log(nw,se);
+
+                var width = Math.abs(se.x-nw.x),
+                    height = Math.abs(se.y-nw.y);
+                
+                var aspect = 528 / 402,
+                curAspect = width / height;
+
+                var newBounds = []
+                
+                if(curAspect > aspect){
+                    console.log('too long')
+                    var west = center.x - (height * aspect)/2,
+                    east = center.x + (height * aspect)/2,
+                    north = center.y + (height)/2,
+                    south = center.y - (height)/2;
+                    newBounds = L.latLngBounds(mapLeft.layerPointToLatLng([west,south]), mapLeft.layerPointToLatLng([east,north]));
+                }
+                else if(curAspect < aspect){
+                    console.log('too tall')
+                    var south = center.y - (width / aspect)/2,
+                    north = center.y + (width / aspect)/2,
+                    east = center.x + (width)/2,
+                    west = center.x - (width)/2;
+                    newBounds = L.latLngBounds(mapLeft.layerPointToLatLng([west,south]), mapLeft.layerPointToLatLng([east,north]));
+                }
+                else{
+                    newBounds = layer.getBounds();
+                }
+                console.log(newBounds);
+                console.log(feature.properties.NAME + ': ' + width + ", " + height);
+
+                imageOverlays[0][feature.properties.NAME] = L.imageOverlay('./Sankey.png', newBounds, {pane: 'flow', opacity: 0.75});
+                /*var svg = d3.select(panes.flow).append('svg').attr('id', feature.properties.NAME);
+                var bounds =layer.getBounds();
+                var nw = mapLeft.latLngToLayerPoint( bounds.getNorthWest() ),
+                    sw = mapLeft.latLngToLayerPoint( bounds.getSouthWest() ),
+                    ne = mapLeft.latLngToLayerPoint( bounds.getNorthEast() );
+
+                var width = Math.abs(ne.x-nw.x),
+                    height = Math.abs(sw.y-nw.y);
+
+                var options = {
+                    width: width, //SVG width
+                    svgHeight: height, // QUAY EDIT 4/5/16 500, //SVG height
+                    linkColorScheme: 0, //0 (Source), 1 (Target), 2 (Gradient)
+                    units: "MGD", //units displayed with values
+                    nodeWidth: 50, //width of rects
+                    imgWidth: 60,// QUAY EDIT 4/5/16  80, //width of image
+                    imgHeight: 60, // QUAY EDIT 4/5/16 80, //height of image
+                    nodePadding: 8, // QUAY EDIT 4/5/16 80, 50, //vertical space between nodes
+                    // QUAY EDIT 4/5/16 BEGIN
+                    // this keeps the scale the same for all rectangles
+                    //useQS: true, //use custom scaling to make rects match links
+                    useQS: false, //use custom scaling to make rects match links
+                    // QUAY EDIT 4/5/16 END
+                    autoScaleImgHeight: true, //scale image based on rect height
+                    showText: true, //show text label beside Resource/Consumer
+                    imgPath: "/Sankey/img/", //User defined path for Resource/Consumer images
+                    // QUAY EDIT 4/7/16
+                    titlefontsize: "24px",
+                    titleOffset: 20,
+                    bucketfontsize: "16px",
+                    layer: layer
+                };
+                var mySankey = new Sankey(TheFluxList, WS_RETURN_DATA, feature.properties.NAME, options);*/
+            }
+
+            if(typeof(countyLayers[0]) == "undefined"){
+                layer.on("mouseover", function (e) {
+                    if(selectedLayers[0] != layer){
+                        layer.setStyle(hoverCountyStyleNew);
+                    }
+                    else{
+                        layer.setStyle(hoverSelectCountyStyle);
+                    }
+                    if(imageOverlays[0][feature.properties.NAME]){
+                        imageOverlays[0][feature.properties.NAME].setOpacity(1);
+                    }
+
+                    infoControls[0].update(feature.properties);
+                    infoControls[1].update(feature.properties);
+                });
+                layer.on("mouseout", function (e) {
+                    // If this layer is selected reset to selectedStyle
+                    if(selectedLayers[0] != layer){
+                        layer.setStyle(defaultCountyStyle);
+                    }
+                    else{
+                        layer.setStyle(selectCountyStyle);
+                    }
+
+                    if(imageOverlays[0][feature.properties.NAME]){
+                        imageOverlays[0][feature.properties.NAME].setOpacity(0.75);
+                    }
+                    
+                    // If there is a selected layer, then update the info with its props
+                    if(!$.isEmptyObject(selectedLayers[0])){
+                        infoControls[0].update(selectedLayers[0].feature.properties);
+                    }
+                    else{
+                        infoControls[0].update();
+                    }
+                    if(!$.isEmptyObject(selectedLayers[1])){
+                        infoControls[1].update(selectedLayers[1].feature.properties);
+                    }
+                    else{
+                        infoControls[1].update();
+                    }
+                });
+                layer.on("click", function(e){
+                    console.log("fire click!!!!");
+                    console.log(feature.properties);
+                    if(selectedLayers[0] != layer){
+                        layer.setStyle(selectCountyStyle);
+                        
+                        // If there is a selected layer reset color to defaultStyle
+                        if(!$.isEmptyObject(selectedLayers[0])){
+                            selectedLayers[0].setStyle(defaultCountyStyle);
+                        }
+
+                        selectedLayers[0] = layer;
+                    }
+                    else{
+                        // Layer is already selected, reset to hoverStyle and clear selectedLayers
+                        layer.setStyle(hoverCountyStyleNew);
+                        selectedLayers[0] = {};
+                    }
+                    infoControls[0].update(feature.properties);               
+                });
+            }            
+        }
+
+        //onEachFeature_Polygon is specific to the huc_4_simple JSON layer
+        function onEachFeature_MapRight(feature, layer) {
+            /*var val = Math.floor(Math.random()* 5);
+            if(typeof(feature.properties.val) != "undefined"){
+                val = feature.properties.val;
+            }
+            else{
+                feature.properties.val = val;
+            }*/            
+            /*var cc = parseInt(feature.properties.COUNTYFP),
+            sc = parseInt(feature.properties.STATEFP),
+            field = activeDataControls[1];
+            var val = mapData[sc][cc][field];
+            var bin = bins[field];
+
+            for(var i = 0; i < bin.length-1; i++){
+                if(val >= bin[i] && val < bin[i+1]){
+                    // console.log('val: ' + val + ', i: ' + i);
+                    val = i;
+                    break;
+                }
+            }*/
+
+            var cc = parseInt(feature.properties.COUNTYFP),
+            sc = parseInt(feature.properties.STATEFP),
+            field = activeDataControls[1];
+
+            var defaultStyle = {};          
+            if(mapData[sc] && mapData[sc][cc]){
+                var val = mapData[sc][cc][field];
+                var bin = bins[field];
+
+                for(var i = 0; i < bin.length-1; i++){
+                    if(val >= bin[i] && val < bin[i+1]){
+                        // console.log('val: ' + val + ', i: ' + i);
+                        val = i;
+                        break;
+                    }
+                }
+
+                defaultStyle = getDefaultCountyStyle(1, val);
+            }
+            else{
+                defaultStyle = getDefaultCountyStyle(2, -1);                
+            }
+
+            var centLatLon = layer.getBounds().getCenter(); //this is used to place the popup in the "mouseover" function            
+            layer.setStyle(defaultStyle);
+
+            if(["Maricopa","Riverside", "Summit", "Butte", "San Bernardino"].indexOf(feature.properties.NAME) > -1){
+
+                var bounds =layer.getBounds();
+                var nw = mapLeft.latLngToLayerPoint( bounds.getNorthWest() ),
+                se = mapLeft.latLngToLayerPoint( bounds.getSouthEast()),
+                center = mapLeft.latLngToLayerPoint(centLatLon);
+
+                console.log(nw,se);
+
+                var width = Math.abs(se.x-nw.x),
+                    height = Math.abs(se.y-nw.y);
+                
+                var aspect = 528 / 402,
+                curAspect = width / height;
+
+                var newBounds = []
+                
+                if(curAspect > aspect){
+                    console.log('too long')
+                    var west = center.x - (height * aspect)/2,
+                    east = center.x + (height * aspect)/2,
+                    north = center.y + (height)/2,
+                    south = center.y - (height)/2;
+                    newBounds = L.latLngBounds(mapLeft.layerPointToLatLng([west,south]), mapLeft.layerPointToLatLng([east,north]));
+                }
+                else if(curAspect < aspect){
+                    console.log('too tall')
+                    var south = center.y - (width / aspect)/2,
+                    north = center.y + (width / aspect)/2,
+                    east = center.x + (width)/2,
+                    west = center.x - (width)/2;
+                    newBounds = L.latLngBounds(mapLeft.layerPointToLatLng([west,south]), mapLeft.layerPointToLatLng([east,north]));
+                }
+                else{
+                    newBounds = layer.getBounds();
+                }
+                console.log(newBounds);
+                console.log(feature.properties.NAME + ': ' + width + ", " + height);
+
+                imageOverlays[1][feature.properties.NAME] = L.imageOverlay('./Sankey.png', newBounds, {pane: 'flow', opacity: 0.75});
+            }
+
+            if(typeof(countyLayers[1]) == "undefined"){
+                layer.on("mouseover", function (e) {
+                    if(selectedLayers[1] != layer){
+                        layer.setStyle(hoverCountyStyle);
+                    }
+                    else{
+                        layer.setStyle(hoverSelectCountyStyle);
+                    }
+                    if(imageOverlays[1][feature.properties.NAME]){
+                        imageOverlays[1][feature.properties.NAME].setOpacity(1);
+                    }
+
+                    infoControls[0].update(feature.properties);
+                    infoControls[1].update(feature.properties);
+                });
+                layer.on("mouseout", function (e) {
+                    // If this layer is selected reset to selectedStyle
+                    if(selectedLayers[1] != layer){
+                        layer.setStyle(defaultCountyStyle);
+                    }
+                    else{
+                        layer.setStyle(selectCountyStyle);
+                    }
+                    if(imageOverlays[1][feature.properties.NAME]){
+                        imageOverlays[1][feature.properties.NAME].setOpacity(0.75);
+                    }
+                    
+                    // If there is a selected layer, then update the info with its props
+                    if(!$.isEmptyObject(selectedLayers[0])){
+                        infoControls[0].update(selectedLayers[0].feature.properties);
+                    }
+                    else{
+                        infoControls[0].update();
+                    }
+                    if(!$.isEmptyObject(selectedLayers[1])){
+                        infoControls[1].update(selectedLayers[1].feature.properties);
+                    }
+                    else{
+                        infoControls[1].update();
+                    }
+                });
+                layer.on("click", function(e){
+                    if(selectedLayers[1] != layer){
+                        layer.setStyle(selectCountyStyle);
+                        
+                        // If there is a selected layer reset color to defaultStyle
+                        if(!$.isEmptyObject(selectedLayers[1])){
+                            selectedLayers[1].setStyle(defaultCountyStyle);
+                        }
+
+                        selectedLayers[1] = layer;
+                    }
+                    else{
+                        // Layer is already selected, reset to hoverStyle and clear selectedLayers
+                        layer.setStyle(hoverCountyStyle);
+                        selectedLayers[1] = {};
+                    }
+                    infoControls[0].update(feature.properties);               
+                });
+            }
+        }
+
+        function onEachFeature_MapNoHover(feature, layer) {
+            layer.setStyle(getDefaultBasinStyle());
+        }
+
+        function onEachFeature_MapNoHoverState(feature, layer) {
+            layer.setStyle(getDefaultStateStyle());
+        }
+
+        //this is the onEachFeature function called when the stationsJSON layer is added to the map 
+        function onEachFeature_Points(feature, layer) {                              
+            if (feature.properties && feature.properties.sitename) {
+                var stationPopUp = "<strong>" + feature.properties.sitename + "</strong>";
+                layer.bindPopup(stationPopUp);
+            }
+        }
+
+        function readStateShapefile(){
+            shp("./shapefiles/States.zip").then(function(geojson){
+                $.each(maps, function(i, map){
+                    stateLayers[i] = new L.GeoJSON(geojson, { onEachFeature: onEachFeature_MapNoHoverState });
+                    // stateLayers[i].addTo(map);
+                });
+                progressLoadingBar(0.2);
+                // setTimeout(readBasinShapefile, 500);
+                // readBasinShapefile();
+                // readRegionShapefile();
+            });
+        }
+        
+
+        function readBasinShapefile(){
+            shp("./shapefiles/Basins.zip").then(function(geojson){
+                $.each(maps, function(i, map){
+                    basinLayers[i] = new L.GeoJSON(geojson, { onEachFeature: onEachFeature_MapNoHover });
+                    basinLayers[i].addTo(map);
+                });            
+            });
+            progressLoadingBar(0.2);
+            setTimeout(readStateShapefile, 500);
+        }
+        readBasinShapefile();
+
+        function readCountyShapefile(){
+            shp("./shapefiles/AllCounties.zip").then(function(geojson){
+                console.log("Done: Reading in geojson");
+                progressLoadingBar(0.5);
+
+                setTimeout(function(){ processGeojson(geojson); }, 500);
+            });
+        }
+
+        function processGeojson(geojson){
+            //Build bin here
+            $.each(geojson.features, function(index, feature){
+                var cc = parseInt(feature.properties.COUNTYFP),
+                sc = parseInt(feature.properties.STATEFP);
+                if(mapData[sc] && mapData[sc][cc]){
+                    $.each(bins, function(binIndex, bin){
+                        bin.push(mapData[sc][cc][binIndex]);
+                    }); 
+                }                                       
+            });
+            $.each(bins, function(binIndex, bin){
+                // console.log(binIndex + ': ' + Math.max.apply(null, bin));
+                bins[binIndex] = calculateRanges(bin);
+            });
+            $.each(maps, function(index, map){
+                var legend = L.control({position: 'bottomleft'});
+                // var legend = L.control({position: 'topright'});
+                legend.onAdd = function (map) {
+
+                    var div = L.DomUtil.create('div', 'info legend');
+
+                    var bin = bins[activeDataControls[index]];
+
+                    // loop through our density intervals and generate a label with a colored square for each interval
+                    for (var i = 0; i < bin.length - 1; i++) {
+                        div.innerHTML +=
+                            '<i style="background:' + colors[index][1 + i] + ';opacity:0.75"></i> ' +
+                            bin[i] + (bin[i + 2] ? '&ndash;' + bin[i + 1] + '<br>' : '+');
+                    }
+                    return div;
+                };
+                // Steptoe Edit for Flow
+                if(index){
+                    legend.addTo(map);
+                }
+                
+                legendControls.push(legend);
+            });
+            //Build bin here
+
+            countyLayers[0] = new L.GeoJSON(geojson, { onEachFeature: onEachFeature_MapLeft, pane: 'county' });
+            countyLayers[0].addTo(maps[0]);
+
+            countyLayers[1] = new L.GeoJSON(geojson, { onEachFeature: onEachFeature_MapRight, pane: 'county' });
+            countyLayers[1].addTo(maps[1]);
+
+            console.log('Done: readCountyShapefile');
+            // Flow images added
+            for(var mapIndex = 0; mapIndex < imageOverlays.length; mapIndex++){
+                $.each(imageOverlays[mapIndex], function(i, d){d.addTo(maps[mapIndex]);});
+            }
+            
+            hideLoading();
+        }
+
+        function readRegionShapefile(){
+            shp("./shapefiles/Regions.zip").then(function(geojson){
+                $.each(maps, function(i, map){
+                    regionLayers[i] = new L.GeoJSON(geojson, { onEachFeature: onEachFeature_MapNoHover });
+                    // regionLayers[i].addTo(map);
+                });            
+            });
+        }
+
+        $('input[type=checkbox][name=layer]').change(function() {
+            activeLayers[this.value] = !activeLayers[this.value];
+            if (this.value == 'county') {
+                toggleMapsLayer(maps, countyLayers, this.checked);
+            }
+            else if (this.value == 'basin') {
+                toggleMapsLayer(maps, basinLayers, this.checked, false, activeLayers['county']);
+            }
+            else if (this.value == 'state') {
+                toggleMapsLayer(maps, stateLayers, this.checked, true);
+            }
+            else if (this.value == 'region') {
+                toggleMapsLayer(maps, regionLayers, this.checked);
+            }
+        });
+
+        $('input[type=checkbox][name=boundary]').change(function() {
+            if (this.value == 'county') {
+                toggleLayerStroke(maps, countyLayers, this.checked);
+            }
+            else if (this.value == 'basin') {
+                toggleLayerStroke(maps, basinLayers, this.checked);
+            }
+            else if (this.value == 'state') {
+                toggleLayerStroke(maps, stateLayers, this.checked);
+            }
+            else if (this.value == 'region') {
+                toggleLayerStroke(maps, regionLayers, this.checked);
+            }
+        });
+
+        
+        /*$("data.txt").ready(function() {
+            $.ajax({
+                type: "GET",
+                url: "data.txt",
+                dataType: "text",
+                success: function(text) {
+                    mapData = processText(text);
+                    $.each(maps, function(index, map){
+                        var legend = L.control({position: 'bottomleft'});
+                        legend.onAdd = function (map) {
+
+                            var div = L.DomUtil.create('div', 'info legend');
+
+                            var bin = bins[activeDataControls[index]];
+
+                            // loop through our density intervals and generate a label with a colored square for each interval
+                            for (var i = 0; i < bin.length; i++) {
+                                div.innerHTML +=
+                                    '<i style="background:' + colors[index][1 + i] + ';opacity:0.75"></i> ' +
+                                    bin[i] + (bin[i + 1] ? '&ndash;' + bin[i + 1] + '<br>' : '+');
+                            }
+                            return div;
+                        };
+                        legend.addTo(map);
+                        legendControls.push(legend);
+                    });                  
+                    readCountyShapefile();
+                }
+            });
+        });*/
+
+        //$.ajax({
+        //    type: "GET",
+        //    url: "data_new.txt",
+        //    dataType: "text",
+        //    success: function(text) {
+        //        mapData = processText(text);
+                /*$.each(maps, function(index, map){
+                    var legend = L.control({position: 'bottomleft'});
+                    legend.onAdd = function (map) {
+
+                        var div = L.DomUtil.create('div', 'info legend');
+
+                        var bin = bins[activeDataControls[index]];
+
+                        // loop through our density intervals and generate a label with a colored square for each interval
+                        for (var i = 0; i < bin.length; i++) {
+                            div.innerHTML +=
+                                '<i style="background:' + colors[index][1 + i] + ';opacity:0.75"></i> ' +
+                                bin[i] + (bin[i + 1] ? '&ndash;' + bin[i + 1] + '<br>' : '+');
+                        }
+                        return div;
+                    };
+                    legend.addTo(map);
+                    legendControls.push(legend);
+                }); */                 
+        //        readCountyShapefile();
+        //    }
+        //});
+
+        d3.csv("./data/data_03_02_17.csv", function(data) {
+            showLoading(true);
+
+            var records = {};
+            $.each(data, function(index, record){
+                $.each(record, function(key, value){
+                    if(!isNaN(value))
+                        value = parseFloat(value);
+                })
+
+                if(records[record.SC]){
+                    records[record.SC][record.CC] = record;
+                }
+                else{
+                    records[record.SC] = {};
+                    records[record.SC][record.CC] = record;
+                }
+            });
+            mapData = records;
+            console.log('Done: Reading CSV');
+            progressLoadingBar(0.2);
+            ProcessFluxData(WS_RETURN_DATA);
+            // drawMySankey(TheFluxList, jsondata, controlID);
+            setTimeout(readCountyShapefile, 500);
+            // readCountyShapefile();
+        });
+
+
+
+        var dataArrays = {};
+
+        function processText(rawText) {
+            var data = rawText.split(/\r\n|\n/);
+            var records = {};
+            $.each(data, function(index, recordText){
+                if(recordText != ""){
+                    var record = {};
+                    record.SC = parseInt(recordText.substring(0,2));
+                    if(record.SC == "31"){
+                        console.log("Record found!");
+                    }
+                    record.SN = recordText.substring(3,11).trim();
+                    record.CC = parseInt(recordText.substring(12,15));
+                    record.CN = recordText.substring(16,40).trim();
+                    record.UTOT = parseFloat(recordText.substring(95,102));
+                    record.RTOT = parseFloat(recordText.substring(126,131));
+                    record.ATOT = parseFloat(recordText.substring(158,165));
+                    record.ITOT = parseFloat(recordText.substring(192,198));
+                    record.PTOT = parseFloat(recordText.substring(222,229));
+                    record.SUR = parseFloat(recordText.substring(230,237));
+                    record.SAL = parseFloat(recordText.substring(238,245));
+                    record.GW = parseFloat(recordText.substring(246,253));
+                    record.REC = parseFloat(recordText.substring(254,260));
+                    if(records[record.SC]){
+                        records[record.SC][record.CC] = record;
+                    }
+                    else{
+                        records[record.SC] = {};
+                        records[record.SC][record.CC] = record;
+                    }
+                    /*$.each(bins, function(binIndex, bin){
+                        bin.push(record[binIndex]);
+                    })*/
+                }                
+            });
+            /*$.each(bins, function(binIndex, bin){
+                console.log(binIndex + ': ' + Math.max.apply(null, bin));
+                bins[binIndex] = calculateRanges(bin);
+            });*/
+            return records;
+        }
+
+        function calculateRanges(dataArray){
+            var max = 5 - (Math.max.apply(null, dataArray) % 5) + Math.max.apply(null, dataArray);
+            // console.log('max: ', max);
+            var increment = max / 5;
+            // console.log('increment: ', increment);
+            var range = [0];
+            for(var i = 1; i < 6; i++)
+                range.push(range[i - 1] + increment);
+            return range;
+        }
+
+        function toggleMapsLayer(maps, layers, value, back, bringCountyFront){
+            $.each(maps, function(index, map){
+                if (value) {
+                    map.addLayer(layers[index]);
+                    if(back){
+                        layers[index].bringToBack();
+                    }
+                }
+                else{
+                    map.removeLayer(layers[index]);
+                }
+
+                if(bringCountyFront){
+                    countyLayers[index].bringToFront();
+                }
+            });
+        }
+
+        function toggleLayerStroke(maps, layers, value){
+            for(var index = 0; index < maps.length; index++){
+                $.each(layers[index].getLayers(), function(i, layer){
+                    layer.setStyle({stroke: value});
+                });
+            }
+        }
+
+    </script>
+
+</body>
+</html>
+
+
